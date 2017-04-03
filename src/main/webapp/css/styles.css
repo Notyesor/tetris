@@ -1,0 +1,87 @@
+#container {
+    width: 600px;
+    margin: auto;
+}
+
+@font-face {
+    font-family: CustomFont;
+    src: url("../fonts/font.ttf");
+}
+
+.inputs {
+    width: 100%;
+    font-size: 14px;
+    font-family: CustomFont, serif;
+    border: solid orange 5px;
+    border-radius: 5px;
+    color: orange;
+    padding: 5px;
+    margin: 5px;
+}
+
+label {
+    font-size: 20px;
+}
+
+a {
+    color: orange;
+}a:link {
+     text-decoration: none;
+ }
+
+a:visited {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a:active {
+    text-decoration: underline;
+}
+
+button {
+    background-color: orange;
+    color: white;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 20px;
+    font-family: CustomFont, serif;
+    border: solid orange 5px;
+    border-radius: 5px;
+}
+
+button:active {
+    background-color: white;
+    color: orange;
+}
+
+body {
+    background-color: darkorchid;
+    color: orange;
+    font-family: CustomFont, serif;
+}
+
+canvas {
+}
+
+.banner {
+    font-size: 40px;
+    font-weight: bold;
+    padding: 10px;
+    margin: 5px;
+}
+
+#languageChange {
+    position: fixed;
+    right: 100px;
+    top: 10px;
+    width: 32px;
+}
+
+#login_table {
+    width: 100%;
+}
