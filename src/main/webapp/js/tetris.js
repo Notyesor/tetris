@@ -1,10 +1,13 @@
 var canvas = document.getElementById("tetris");
-
-const WIDTH = 30;
-const HEIGHT = 8;
+var scoreLabel = document.getElementById("scoreLabel");
+var gameOver = document.getElementById("game_over");
+var isGameOver = false;
+var bufferedFigure = 0;
+var WIDTH = 20;
+var HEIGHT = 30;
 const SIZE = 20;
 const FRAMES = 24;
-const START_X = Math.round(WIDTH / 2);
+var START_X = Math.round(WIDTH / 2);
 const START_Y = -4;
 
 document.getElementsByTagName("body")[0].onkeydown = function (event) {
@@ -36,7 +39,7 @@ field.addFigureToField = function (figure) {
 };
 
 figure = {
-    breaks: [],
+    bricks: [],
     type: 0,
     position: 0
 };
@@ -187,6 +190,12 @@ figure.canRotate = function () {
         case 1: {
             switch (figure.position) {
                 case 0: {
+                    if (
+                        (figure.bricks[2].x + 1>= WIDTH ||
+                        figure.bricks[2].y - 2 >= HEIGHT) ||
+                        (figure.bricks[3].x + 1 >= WIDTH ||
+                        figure.bricks[3].y - 2 >= HEIGHT)
+                    ) return false;
                     for (var i = 0; i < field.bricks.length; i++) {
                         var fieldBrick = field.bricks[i];
                         if (
@@ -198,6 +207,12 @@ figure.canRotate = function () {
                     }
                 } return true;
                 case 1: {
+                    if (
+                        (figure.bricks[1].x + 1 >= WIDTH ||
+                        figure.bricks[1].y >= HEIGHT) ||
+                        (figure.bricks[3].x - 1 >= WIDTH ||
+                        figure.bricks[3].y + 2 >= HEIGHT)
+                    ) return false;
                     for (var i = 0; i < field.bricks.length; i++) {
                         var fieldBrick = field.bricks[i];
                         if (
@@ -209,6 +224,14 @@ figure.canRotate = function () {
                     }
                 } return true;
                 case 2: {
+                    if (
+                        (figure.bricks[0].x >= WIDTH ||
+                        figure.bricks[0].y + 1 >= HEIGHT) ||
+                        (figure.bricks[2].x + 1 >= WIDTH ||
+                        figure.bricks[2].y >= HEIGHT) ||
+                        (figure.bricks[3].x + 1 >= WIDTH ||
+                        figure.bricks[3].y - 1 >= HEIGHT)
+                    ) return false;
                     for (var i = 0; i < field.bricks.length; i++) {
                         var fieldBrick = field.bricks[i];
                         if (
@@ -222,6 +245,16 @@ figure.canRotate = function () {
                     }
                 } return true;
                 case 3: {
+                    if (
+                        (figure.bricks[0].x >= WIDTH ||
+                        figure.bricks[0].y - 1 >= HEIGHT) ||
+                        (figure.bricks[1].x - 1 >= WIDTH ||
+                        figure.bricks[1].y >= HEIGHT) ||
+                        (figure.bricks[2].x - 2 >= WIDTH ||
+                        figure.bricks[2].y + 2 >= HEIGHT) ||
+                        (figure.bricks[3].x - 1 >= WIDTH ||
+                        figure.bricks[3].y + 1 >= HEIGHT)
+                    ) return false;
                     for (var i = 0; i < field.bricks.length; i++) {
                         var fieldBrick = field.bricks[i];
                         if (
@@ -241,6 +274,12 @@ figure.canRotate = function () {
         case 2: {
             switch (figure.position) {
                 case 0: {
+                    if (
+                        (figure.bricks[0].x + 2 >= WIDTH ||
+                        figure.bricks[0].y >= HEIGHT) ||
+                        (figure.bricks[3].x >= WIDTH ||
+                        figure.bricks[3].y - 2 >= HEIGHT)
+                    ) return false;
                     for (var i = 0; i < field.bricks.length; i++) {
                         var fieldBrick = field.bricks[i];
                         if (
@@ -252,6 +291,12 @@ figure.canRotate = function () {
                     }
                 } return true;
                 case 1: {
+                    if (
+                        (figure.bricks[0].x - 2 >= WIDTH ||
+                        figure.bricks[0].y >= HEIGHT) ||
+                        (figure.bricks[3].x >= WIDTH ||
+                        figure.bricks[3].y + 2 >= HEIGHT)
+                    ) return false;
                     for (var i = 0; i < field.bricks.length; i++) {
                         var fieldBrick = field.bricks[i];
                         if (
@@ -267,6 +312,14 @@ figure.canRotate = function () {
         case 3: {
             switch (figure.position) {
                 case 0: {
+                    if (
+                        (figure.bricks[1].x + 1 >= WIDTH ||
+                        figure.bricks[1].y - 1 >= HEIGHT) ||
+                        (figure.bricks[2].x + 2 >= WIDTH ||
+                        figure.bricks[2].y - 2 >= HEIGHT) ||
+                        (figure.bricks[3].x + 3 >= WIDTH ||
+                        figure.bricks[3].y - 3 >= HEIGHT)
+                    ) return false;
                     for (var i = 0; i < field.bricks.length; i++) {
                         var fieldBrick = field.bricks[i];
                         if (
@@ -280,6 +333,14 @@ figure.canRotate = function () {
                     }
                 } return true;
                 case 1: {
+                    if (
+                        (figure.bricks[1].x - 1 >= WIDTH ||
+                        figure.bricks[1].y + 1 >= HEIGHT) ||
+                        (figure.bricks[2].x - 2 >= WIDTH ||
+                        figure.bricks[2].y + 2 >= HEIGHT) ||
+                        (figure.bricks[3].x - 3 >= WIDTH ||
+                        figure.bricks[3].y + 3 >= HEIGHT)
+                    ) return false;
                     for (var i = 0; i < field.bricks.length; i++) {
                         var fieldBrick = field.bricks[i];
                         if (
@@ -305,13 +366,58 @@ figure.setColor = function (color) {
     }
 };
 
-function initTetris() {
+function checkFieldForScore() {
+    for (var i = 0; i < HEIGHT; i++) {
+        var counter = 0;
+        for (j = 0; j < field.bricks.length; j++) {
+            if (field.bricks[j].y == i) counter++;
+        }
+        if (counter >= WIDTH) {
+            for (j = field.bricks.length - 1; j >= 0; j--) {
+                if (field.bricks[j].y == i) field.bricks.splice(j, 1);
+                else if (field.bricks[j].y < i) field.bricks[j].y += 1;
+            }
+            scoreLabel.innerText = parseInt(scoreLabel.innerText) + 10;
+        }
+    }
+}
+
+function checkGameOver() {
+    for (var i = 0; i < figure.bricks.length; i++) {
+        if (figure.bricks[i].y < 0) {
+            isGameOver = true;
+            submitScore();
+            gameOver.style = 'visibility: visible';
+        }
+    }
+}
+function initTetris(size) {
+    switch (size) {
+        case 'small': {
+            WIDTH = 15;
+            HEIGHT = 15;
+        } break;
+        case 'medium': {
+            WIDTH = 15;
+            HEIGHT = 18;
+        } break;
+        case 'large': {
+            WIDTH = 15;
+            HEIGHT = 23;
+        } break;
+        default: {
+            WIDTH = 15;
+            HEIGHT = 20;
+        } break;
+    }
+    START_X = Math.round(WIDTH / 2) - 1;
     newFigure();
     canvas.width = WIDTH * SIZE;
     canvas.height = HEIGHT * SIZE;
     var ctx = canvas.getContext('2d');
     if ( ctx ) {
         setInterval(function () {
+            if (isGameOver) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = "midnightblue";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -326,11 +432,14 @@ function initTetris() {
         }, 1000 / FRAMES);
 
         setInterval(function () {
+            if (isGameOver) return;
             if (figure.canMoveDown()) {
                 figure.moveDown();
             } else {
-                //figure.setColor("green");
+                figure.setColor("green");
                 field.addFigureToField(figure);
+                checkGameOver();
+                checkFieldForScore();
                 newFigure();
             }
         }, 1000);
@@ -338,7 +447,8 @@ function initTetris() {
 }
 
 function newFigure() {
-    var selection = getRandomArbitary(0, 3);
+    var selection = bufferedFigure;
+    getRandomFigureNumber();
     switch (selection) {
         case 0: {
             figure.bricks = [
@@ -391,4 +501,50 @@ function getRandomArbitary(min, max)
 
 function getRandomColor() {
     return "#"+((1<<24)*Math.random()|0).toString(16);
+}
+
+function getRandomFigureNumber() {
+    var request = getXmlHttp();
+    request.onreadystatechange = function () {
+        if (request.readyState == 4) {
+            if (request.status == 200) {
+                bufferedFigure = parseInt(request.responseText);
+            } else {
+                alert("Ошибка соединения");
+            }
+        }
+    };
+    request.open('GET', '/server/figure', false);
+    request.send(null);
+}
+
+function submitScore() {
+    var request = getXmlHttp();
+    request.onreadystatechange = function () {
+        if (request.readyState == 4) {
+            if (request.status == 200) {
+            } else {
+                alert("Ошибка соединения");
+            }
+        }
+    };
+    request.open('GET', '/server/score?score=' + scoreLabel.innerText, false);
+    request.send(null);
+}
+
+function getXmlHttp(){
+    var xmlhttp;
+    try {
+        xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+    } catch (e) {
+        try {
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        } catch (E) {
+            xmlhttp = false;
+        }
+    }
+    if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
+        xmlhttp = new XMLHttpRequest();
+    }
+    return xmlhttp;
 }

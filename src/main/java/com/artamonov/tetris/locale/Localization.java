@@ -21,4 +21,5 @@ public abstract class Localization {
     }
 
     abstract void initMessages();
+    public abstract String getLocaleCode();
 }

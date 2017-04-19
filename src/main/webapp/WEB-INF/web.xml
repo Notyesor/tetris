@@ -6,6 +6,6 @@
     <display-name>Tetris</display-name>
 
     <welcome-file-list>
-        <welcome-file>signin.jsp</welcome-file>
+        <welcome-file>main.jsp</welcome-file>
     </welcome-file-list>
 </web-app>

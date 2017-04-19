@@ -2,81 +2,61 @@
 
 <%@ page import="com.artamonov.tetris.locale.Localization" %>
 <%@ page import="com.artamonov.tetris.locale.LocalizationFactory" %>
-<%@ page import="com.artamonov.tetris.locale.Languages" %>
 <%
-    Localization localization;
-    String sessionLocale = (String) session.getAttribute("locale");
-    String locale = (String) request.getParameter("locale");
-    if (locale == null) {
-        if (sessionLocale != null) locale = sessionLocale;
-        else locale = "en";
-    } else {
-        if ((sessionLocale != null && !locale.equals(sessionLocale)) || sessionLocale == null) {
-            session.setAttribute("locale", locale);
-        }
-    }
-    switch (locale) {
-        case "ru":
-            localization = LocalizationFactory.createLocalization(Languages.RUSSIAN); break;
-        case "en":
-            localization = LocalizationFactory.createLocalization(Languages.ENGLISH); break;
-        default:
-            localization = LocalizationFactory.createLocalization(Languages.ENGLISH); break;
-    }
+    Localization localization = LocalizationFactory.createLocalization(session, request);
 %>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>localization.getMessage("signin_banner")</title>
+    <title><%=localization.getMessage("signin_banner")%></title>
     <link href="css/styles.css" rel="stylesheet"/>
     <script src="js/main.js"></script>
 </head>
-<body onload="initLogo('<%=locale%>')">
+<body onload="initLogo('<%=localization.getLocaleCode()%>')">
 <div id="container">
     <canvas id="logo"></canvas>
-    <form action="">
+    <form id="signinForm" action="main.jsp" method="get">
         <p class="banner"><%=localization.getMessage("signin_banner")%></p>
-        <table id="login_table">
+        <table class="tetris_table">
             <tr>
                 <td align="right" width="200px">
-                    <label for="inputLogin"><%=localization.getMessage("signin_input_login_label")%>:</label>
+                    <label for="login"><%=localization.getMessage("signin_input_login_label")%>:</label>
                 </td>
                 <td>
-                    <input type="text" id="inputLogin" class="inputs"
+                    <input type="text" id="login" name="login" class="inputs"
                            placeholder="<%=localization.getMessage("signin_input_login_placeholder")%>"
                            required autofocus autocomplete="off">
                 </td>
             </tr>
             <tr>
                 <td align="right" width="200px">
-                    <label for="inputPassword"><%=localization.getMessage("signin_input_password_label")%>:</label>
+                    <label for="password"><%=localization.getMessage("signin_input_password_label")%>:</label>
                 </td>
                 <td>
-                    <input type="password" id="inputPassword" class="inputs"
+                    <input type="password" id="password" name="password" class="inputs"
                            placeholder="<%=localization.getMessage("signin_input_password_placeholder")%>"
                            required autocomplete="off">
                 </td>
             </tr>
-            <tr>
-                <td colspan="2">
-                    <label>
-                        <a href="signup.jsp"><%=localization.getMessage("signin_register_link")%>
-                    </label>
-                </td>
-            </tr>
-            <tr>
-                <td></td>
-                <td align="right">
-                    <button type="submit"><%=localization.getMessage("signin_button")%></button>
-                </td>
-            </tr>
         </table>
     </form>
+    <table class="tetris_table">
+        <tr>
+            <td>
+                <label>
+                    <a href="signup.jsp"><%=localization.getMessage("signin_register_link")%>
+                </label>
+            </td>
+            <td align="right">
+                <button onclick="signin()"><%=localization.getMessage("signin_button")%></button>
+            </td>
+        </tr>
+    </table>
 </div>
 
 <div>
 <%
-    switch (locale) {
+    switch (localization.getLocaleCode()) {
         case "ru": {
             %><img id="languageChange" src="img/united-states-flag.png" onclick="changeLanguage('en')"/><%
         } break;
