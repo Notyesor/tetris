@@ -7,6 +7,22 @@ function signin() {
     var login = document.getElementById("login").value;
     var password = document.getElementById("password").value;
     if (login == "" || password == "") return;
+    if (password.length < 4) {
+        alert("Пароль слишком короткий!");
+        return;
+    }
+    if (password.length > 12) {
+        alert("Пароль слишком длинный!");
+        return;
+    }
+    if (login.length < 4) {
+        alert("Логин слишком короткий!");
+        return;
+    }
+    if (login.length > 12) {
+        alert("Логин слишком длинный!");
+        return;
+    }
     var request = getXmlHttp();
     request.onreadystatechange = function () {
         if (request.readyState == 4) {
@@ -30,9 +46,25 @@ function signup() {
     var password = document.getElementById("password").value;
     var confirmPassword = document.getElementById("confirmPassword").value;
     if (login == "" || password == "" || confirmPassword == "") return;
+    if (password.length < 4) {
+        alert("Пароль слишком короткий!");
+        return;
+    }
+    if (password.length > 12) {
+        alert("Пароль слишком длинный!");
+        return;
+    }
+    if (login.length < 4) {
+        alert("Логин слишком короткий!");
+        return;
+    }
+    if (login.length > 12) {
+        alert("Логин слишком длинный!");
+        return;
+    }
     if (password != confirmPassword) {
         alert("Пароли не совпадают!");
-        return
+        return;
     }
     var request = getXmlHttp();
     request.onreadystatechange = function () {
